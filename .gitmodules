@@ -1,0 +1,3 @@
+[submodule "Craft"]
+	path = Craft
+	url = git@github.com:fogleman/Craft.git
