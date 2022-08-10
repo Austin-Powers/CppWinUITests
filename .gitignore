@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Ignore thumbnails created by Windows
+Thumbs.db
+
+# Visual Studio
+out/
+.vs/
+
