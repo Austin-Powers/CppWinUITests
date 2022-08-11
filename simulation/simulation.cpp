@@ -8,6 +8,8 @@ Simulation::Simulation(std::uint16_t const cellSize, std::uint16_t const columns
     : _cellSize{cellSize}, _columns{columns}, _rows{rows}
 {}
 
-size_t Simulation::particleCount() const noexcept { return 0U; }
+void Simulation::add(Particle const &particle) noexcept { _particles.push_back(particle); }
+
+size_t Simulation::particleCount() const noexcept { return _particles.size(); }
 
 } // namespace APowers

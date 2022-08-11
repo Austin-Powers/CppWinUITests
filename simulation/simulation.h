@@ -1,8 +1,11 @@
 #ifndef CPPWINUITESTS_SIMULATION_H
 #define CPPWINUITESTS_SIMULATION_H
 
+#include "particle.h"
+
 #include <cstdint>
 #include <gsl/gsl>
+#include <vector>
 
 namespace APowers {
 
@@ -32,6 +35,12 @@ public:
     /// @return The rows of the grid.
     inline std::uint16_t rows() const noexcept { return _rows; }
 
+    /// @brief Adds a particle to the simulation.
+    ///
+    /// @param particle The particle to add.
+    /// @remarks If the position
+    void add(Particle const &particle) noexcept;
+
     /// @brief The particle count of the simulation.
     ///
     /// @return The number of particles in the simulation.
@@ -46,6 +55,9 @@ private:
 
     /// @brief The rows of the grid.
     std::uint16_t _rows{};
+
+    /// @brief The particles of the simulation.
+    std::vector<Particle> _particles{};
 };
 
 } // namespace APowers

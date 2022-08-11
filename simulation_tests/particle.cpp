@@ -4,7 +4,7 @@
 
 namespace APowers::UnitTests {
 
-struct ParticleTests : public testing::Test
+struct ParticleTest : public testing::Test
 {
     double epsilon{1e-16};
 
@@ -15,7 +15,7 @@ struct ParticleTests : public testing::Test
     Particle acceleratingParticle{47.11, 42.0, 1.234, 0.0, 0.0, 0.0815};
 };
 
-TEST_F(ParticleTests, ConstructorBehaviorAsExpected)
+TEST_F(ParticleTest, ConstructorBehaviorAsExpected)
 {
     EXPECT_EQ(standingParticle.xPosition, 3.0);
     EXPECT_EQ(standingParticle.yPosition, 4.0);
@@ -39,7 +39,7 @@ TEST_F(ParticleTests, ConstructorBehaviorAsExpected)
     EXPECT_EQ(acceleratingParticle.yAcceleration, 0.0815);
 }
 
-TEST_F(ParticleTests, SimulateOnStandingParticleChangesNothing)
+TEST_F(ParticleTest, SimulateOnStandingParticleChangesNothing)
 {
     auto const xAccelerationExpectation = standingParticle.xAcceleration;
     auto const yAccelerationExpectation = standingParticle.yAcceleration;
@@ -58,7 +58,7 @@ TEST_F(ParticleTests, SimulateOnStandingParticleChangesNothing)
     EXPECT_NEAR(standingParticle.yPosition, yPositionExpectation, epsilon);
 }
 
-TEST_F(ParticleTests, SimulateOnMovingParticleChangesPositionAsExpected)
+TEST_F(ParticleTest, SimulateOnMovingParticleChangesPositionAsExpected)
 {
     auto const xAccelerationExpectation = movingParticle.xAcceleration;
     auto const yAccelerationExpectation = movingParticle.yAcceleration;
@@ -77,19 +77,19 @@ TEST_F(ParticleTests, SimulateOnMovingParticleChangesPositionAsExpected)
     EXPECT_NEAR(movingParticle.yPosition, yPositionExpectation, epsilon);
 }
 
-TEST_F(ParticleTests, SimulateOnAcceleratingParticleChangesParticleStateAsExpected)
+TEST_F(ParticleTest, SimulateOnAcceleratingParticleChangesParticleStateAsExpected)
 {
-    auto const xAccelerationExpectation2 = acceleratingParticle.xAcceleration;
-    auto const yAccelerationExpectation2 = acceleratingParticle.yAcceleration;
-    auto const xVelocityExpectation      = acceleratingParticle.xVelocity + xAccelerationExpectation2;
-    auto const yVelocityExpectation      = acceleratingParticle.yVelocity + yAccelerationExpectation2;
-    auto const xPositionExpectation      = acceleratingParticle.xPosition + xVelocityExpectation;
-    auto const yPositionExpectation      = acceleratingParticle.yPosition + yVelocityExpectation;
+    auto const xAccelerationExpectationBefore = acceleratingParticle.xAcceleration;
+    auto const yAccelerationExpectationBefore = acceleratingParticle.yAcceleration;
+    auto const xVelocityExpectation           = acceleratingParticle.xVelocity + xAccelerationExpectationBefore;
+    auto const yVelocityExpectation           = acceleratingParticle.yVelocity + yAccelerationExpectationBefore;
+    auto const xPositionExpectation           = acceleratingParticle.xPosition + xVelocityExpectation;
+    auto const yPositionExpectation           = acceleratingParticle.yPosition + yVelocityExpectation;
 
     acceleratingParticle.simulate();
 
-    EXPECT_NEAR(acceleratingParticle.xAcceleration, (xAccelerationExpectation2 * 0.8), epsilon);
-    EXPECT_NEAR(acceleratingParticle.yAcceleration, (yAccelerationExpectation2 * 0.8), epsilon);
+    EXPECT_NEAR(acceleratingParticle.xAcceleration, (xAccelerationExpectationBefore * 0.8), epsilon);
+    EXPECT_NEAR(acceleratingParticle.yAcceleration, (yAccelerationExpectationBefore * 0.8), epsilon);
     EXPECT_NEAR(acceleratingParticle.xVelocity, xVelocityExpectation, epsilon);
     EXPECT_NEAR(acceleratingParticle.yVelocity, yVelocityExpectation, epsilon);
     EXPECT_NEAR(acceleratingParticle.xPosition, xPositionExpectation, epsilon);
