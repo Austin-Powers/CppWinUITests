@@ -12,4 +12,6 @@ void Simulation::add(Particle const &particle) noexcept { _particles.push_back(p
 
 size_t Simulation::particleCount() const noexcept { return _particles.size(); }
 
+gsl::span<Particle const> Simulation::particles() const noexcept { return gsl::span<Particle const>{_particles}; }
+
 } // namespace APowers

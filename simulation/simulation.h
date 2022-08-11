@@ -10,6 +10,8 @@
 namespace APowers {
 
 /// @brief Class for performing a particle simulation on a grid of quadratic cells.
+///
+/// @remarks The cells form a torus, so particles leaving on one side return on the other.
 class Simulation final
 {
 public:
@@ -45,6 +47,11 @@ public:
     ///
     /// @return The number of particles in the simulation.
     size_t particleCount() const noexcept;
+
+    /// @brief Returns a span of all particles of this simulation.
+    ///
+    /// @return A span of all particles of this simulation.
+    gsl::span<Particle const> particles() const noexcept;
 
 private:
     /// @brief The size of the cells in the grid.
