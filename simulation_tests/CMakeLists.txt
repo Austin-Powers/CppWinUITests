@@ -10,6 +10,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 set(SOURCES
+	particle.cpp
 	simulation.cpp
 )
 

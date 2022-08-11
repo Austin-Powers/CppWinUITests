@@ -1,4 +1,6 @@
 set(SOURCES
+	particle.cpp
+	particle.h
 	simulation.cpp
 	simulation.h
 	../Craft/deps/noise/noise.c
