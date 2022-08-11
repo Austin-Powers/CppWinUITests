@@ -40,6 +40,9 @@ struct Particle final
              double pYVelocity     = 0.0,
              double pXAcceleration = 0.0,
              double pYAcceleration = 0.0) noexcept;
+
+    /// @brief Simulates the movement of the particle.
+    void simulate() noexcept;
 };
 
 } // namespace APowers

@@ -15,4 +15,15 @@ Particle::Particle(double const pXPosition,
       xAcceleration{pXAcceleration},
       yAcceleration{pYAcceleration}
 {}
+
+void Particle::simulate() noexcept
+{
+    xVelocity += xAcceleration;
+    yVelocity += yAcceleration;
+    xPosition += xVelocity;
+    yPosition += yVelocity;
+    xAcceleration *= 0.8;
+    yAcceleration *= 0.8;
+}
+
 } // namespace APowers
