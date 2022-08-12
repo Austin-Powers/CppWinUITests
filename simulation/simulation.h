@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <gsl/gsl>
+#include <optional>
 #include <vector>
 
 namespace APowers {
@@ -52,6 +53,15 @@ public:
     ///
     /// @return A span of all particles of this simulation.
     gsl::span<Particle const> particles() const noexcept;
+
+    /// @brief Performs the next step in the simulation.
+    void simulate() noexcept;
+
+    /// @brief Returns the direction of the force inside the cell with the given coordinates.
+    /// @param column The colum of the cell.
+    /// @param row The row of the cell.
+    /// @return The direction of the force, if the cell is inside the grid.
+    std::optional<Vector> forceDirection(std::uint16_t column, std::uint16_t row) noexcept;
 
 private:
     /// @brief The size of the cells in the grid.

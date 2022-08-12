@@ -1,6 +1,13 @@
 #include "simulation/simulation.h"
 
+#include <cmath>
 #include <gtest/gtest.h>
+#include <noise.h>
+
+// because in Visual Studio _USE_MATH_DEFINES does not reach <math.h> through <cmath>
+#ifndef M_PI
+#include <corecrt_math_defines.h>
+#endif
 
 namespace APowers::UnitTests {
 
@@ -19,6 +26,16 @@ struct SimulationTest : public testing::Test
         EXPECT_NEAR(reality.velocity.y, expectation.velocity.y, epsilon);
         EXPECT_NEAR(reality.acceleration.x, expectation.acceleration.x, epsilon);
         EXPECT_NEAR(reality.acceleration.y, expectation.acceleration.y, epsilon);
+    }
+
+    Vector calculateForceAt(std::uint16_t const x, std::uint16_t const y) const noexcept
+    {
+        Vector     result{};
+        auto const noise     = simplex2(x, y, 6, 0.4F, 3.0F);
+        auto const direction = noise * 2.0 * M_PI;
+        result.x             = std::sin(direction);
+        result.y             = std::cos(direction);
+        return result;
     }
 };
 
@@ -60,9 +77,24 @@ TEST_F(SimulationTest, ParticlesAreReturnedCorrectlyByTheSimulation)
 
 TEST_F(SimulationTest, ForceDirectionReturnsEmptyOptionalIfOutOfGrid)
 {
-    EXPECT_FALSE(simulation.forceDirection(16U, 9U));
-    EXPECT_FALSE(simulation.forceDirection(16U, 8U));
-    EXPECT_FALSE(simulation.forceDirection(15U, 9U));
+    EXPECT_FALSE(simulation.forceDirection(simulation.columns(), simulation.rows()));
+    EXPECT_FALSE(simulation.forceDirection(simulation.columns() - 1, simulation.rows()));
+    EXPECT_FALSE(simulation.forceDirection(simulation.columns(), simulation.rows() - 1));
+}
+
+TEST_F(SimulationTest, ForceDirectionInsideGridAsExepected)
+{
+    for (auto y = 0U; y < simulation.rows(); ++y)
+    {
+        for (auto x = 0U; x < simulation.columns(); ++x)
+        {
+            auto const force = simulation.forceDirection(x, y);
+            ASSERT_TRUE(force);
+            auto const expectation = calculateForceAt(x, y);
+            EXPECT_NEAR(force->x, expectation.x, epsilon);
+            EXPECT_NEAR(force->y, expectation.y, epsilon);
+        }
+    }
 }
 
 } // namespace APowers::UnitTests

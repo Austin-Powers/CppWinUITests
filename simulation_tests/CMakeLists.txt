@@ -22,6 +22,9 @@ target_link_libraries(${PROJECTNAME} PUBLIC
 	"simulation"
 	"gtest_main"
 )
+target_include_directories(${PROJECTNAME} PUBLIC
+	${PROJECT_SOURCE_DIR}/Craft/deps/noise
+)
 
 include(GoogleTest)
 gtest_discover_tests(${PROJECTNAME})
