@@ -17,8 +17,25 @@ struct RendererTests : public testing::Test
 
 TEST_F(RendererTests, RendererInitializedCorrectly)
 {
-    auto const imageData = renderer.image();
+    auto const expectedWidth  = simulation.cellSize() * simulation.columns();
+    auto const expectedHeight = simulation.cellSize() * simulation.rows();
+    auto const imageData      = renderer.image();
     ASSERT_GE(imageData.size(), sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+
+    BITMAPFILEHEADER fileHeader{};
+    BITMAPINFOHEADER infoHeader{};
+    std::memcpy(&fileHeader, imageData.data(), sizeof(BITMAPFILEHEADER));
+    std::memcpy(&infoHeader, imageData.data() + sizeof(BITMAPFILEHEADER), sizeof(BITMAPINFOHEADER));
+    EXPECT_EQ(fileHeader.bfType, 0x4D42U);
+    EXPECT_EQ(fileHeader.bfOffBits, sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+    EXPECT_EQ(fileHeader.bfSize, fileHeader.bfOffBits + infoHeader.biSizeImage);
+    EXPECT_EQ(infoHeader.biSize, sizeof(BITMAPINFOHEADER));
+    EXPECT_EQ(infoHeader.biWidth, expectedWidth);
+    EXPECT_EQ(infoHeader.biHeight, expectedHeight);
+    EXPECT_EQ(infoHeader.biPlanes, 1U);
+    EXPECT_EQ(infoHeader.biBitCount, 32U);
+    EXPECT_EQ(infoHeader.biSizeImage, 4U * expectedWidth * expectedHeight);
+    EXPECT_EQ(imageData.size(), fileHeader.bfSize);
 }
 
 } // namespace APowers::UnitTests
