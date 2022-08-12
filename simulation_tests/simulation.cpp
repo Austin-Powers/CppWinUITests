@@ -13,12 +13,12 @@ struct SimulationTest : public testing::Test
 
     void compareParticles(Particle const &reality, Particle const &expectation) const noexcept
     {
-        EXPECT_NEAR(reality.xPosition, expectation.xPosition, epsilon);
-        EXPECT_NEAR(reality.yPosition, expectation.yPosition, epsilon);
-        EXPECT_NEAR(reality.xVelocity, expectation.xVelocity, epsilon);
-        EXPECT_NEAR(reality.yVelocity, expectation.yVelocity, epsilon);
-        EXPECT_NEAR(reality.xAcceleration, expectation.xAcceleration, epsilon);
-        EXPECT_NEAR(reality.yAcceleration, expectation.yAcceleration, epsilon);
+        EXPECT_NEAR(reality.position.x, expectation.position.x, epsilon);
+        EXPECT_NEAR(reality.position.y, expectation.position.y, epsilon);
+        EXPECT_NEAR(reality.velocity.x, expectation.velocity.x, epsilon);
+        EXPECT_NEAR(reality.velocity.y, expectation.velocity.y, epsilon);
+        EXPECT_NEAR(reality.acceleration.x, expectation.acceleration.x, epsilon);
+        EXPECT_NEAR(reality.acceleration.y, expectation.acceleration.y, epsilon);
     }
 };
 
@@ -56,6 +56,13 @@ TEST_F(SimulationTest, ParticlesAreReturnedCorrectlyByTheSimulation)
     compareParticles(particles[0], particle0);
     compareParticles(particles[1], particle1);
     compareParticles(particles[2], particle0);
+}
+
+TEST_F(SimulationTest, ForceDirectionReturnsEmptyOptionalIfOutOfGrid)
+{
+    EXPECT_FALSE(simulation.forceDirection(16U, 9U));
+    EXPECT_FALSE(simulation.forceDirection(16U, 8U));
+    EXPECT_FALSE(simulation.forceDirection(15U, 9U));
 }
 
 } // namespace APowers::UnitTests

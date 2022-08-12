@@ -2,28 +2,25 @@
 
 namespace APowers {
 
-Particle::Particle(double const pXPosition,
-                   double const pYPosition,
-                   double const pXVelocity,
-                   double const pYVelocity,
-                   double const pXAcceleration,
-                   double const pYAcceleration) noexcept
-    : xPosition{pXPosition},
-      yPosition{pYPosition},
-      xVelocity{pXVelocity},
-      yVelocity{pYVelocity},
-      xAcceleration{pXAcceleration},
-      yAcceleration{pYAcceleration}
+Particle::Particle(double const xPosition,
+                   double const yPosition,
+                   double const xVelocity,
+                   double const yVelocity,
+                   double const xAcceleration,
+                   double const yAcceleration) noexcept
+    : position{xPosition, yPosition}, velocity{xVelocity, yVelocity}, acceleration{xAcceleration, yAcceleration}
+{}
+
+Particle::Particle(Vector const &pPosition, Vector const &pVelocity, Vector const &pAcceleration) noexcept
+    : position{pPosition}, velocity{pVelocity}, acceleration{pAcceleration}
 {}
 
 void Particle::simulate() noexcept
 {
-    xVelocity += xAcceleration;
-    yVelocity += yAcceleration;
-    xPosition += xVelocity;
-    yPosition += yVelocity;
-    xAcceleration *= 0.8;
-    yAcceleration *= 0.8;
+    velocity += acceleration;
+    position += velocity;
+    acceleration.x *= 0.8;
+    acceleration.y *= 0.8;
 }
 
 } // namespace APowers

@@ -12,6 +12,7 @@ FetchContent_MakeAvailable(googletest)
 set(SOURCES
 	particle.cpp
 	simulation.cpp
+	vector.cpp
 )
 
 setup_executable("${SOURCES}")
