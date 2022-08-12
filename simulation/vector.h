@@ -1,5 +1,5 @@
-#ifndef CPPWINUITESTS_VECTOR_H
-#define CPPWINUITESTS_VECTOR_H
+#ifndef CPPWINUITESTS_SIMULATION_VECTOR_H
+#define CPPWINUITESTS_SIMULATION_VECTOR_H
 
 namespace APowers {
 
@@ -59,4 +59,4 @@ inline Vector operator-(Vector const &a, Vector const &b) noexcept { return Vect
 
 } // namespace APowers
 
-#endif // !CPPWINUITESTS_VECTOR_H
+#endif // !CPPWINUITESTS_SIMULATION_VECTOR_H

@@ -1,5 +1,5 @@
-#ifndef CPPWINUITESTS_PARTICLE_H
-#define CPPWINUITESTS_PARTICLE_H
+#ifndef CPPWINUITESTS_SIMULATION_PARTICLE_H
+#define CPPWINUITESTS_SIMULATION_PARTICLE_H
 
 #include "vector.h"
 
@@ -47,4 +47,4 @@ struct Particle final
 
 } // namespace APowers
 
-#endif // !CPPWINUITESTS_PARTICLE_H
+#endif // !CPPWINUITESTS_SIMULATION_PARTICLE_H
