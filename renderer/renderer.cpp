@@ -5,7 +5,7 @@
 
 namespace APowers {
 
-Renderer::Renderer(Simulation const &simulation) noexcept
+Renderer::Renderer(Simulation &simulation) noexcept : _simulation{simulation}
 {
     BITMAPFILEHEADER fileHeader{};
     BITMAPINFOHEADER infoHeader{};
@@ -39,7 +39,26 @@ Renderer::Renderer(Simulation const &simulation) noexcept
     }
 }
 
-void Renderer::render() noexcept {}
+void Renderer::render() noexcept
+{
+    auto const          cellSize = _simulation.cellSize();
+    std::uint16_t const width    = cellSize * _simulation.columns();
+    std::uint16_t const height   = cellSize * _simulation.rows();
+
+    for (auto y = 0U; y < height; ++y)
+    {
+        for (auto x = 0U; x < width; ++x)
+        {
+            auto const force = _simulation.forceDirection(x / cellSize, y / cellSize);
+            if (force)
+            {
+                auto &pixel = _pixelBuffer[(y * width) + x];
+                pixel.blue  = static_cast<std::uint8_t>(std::abs(force->x) * 255.0);
+                pixel.green = static_cast<std::uint8_t>(std::abs(force->y) * 255.0);
+            }
+        }
+    }
+}
 
 gsl::span<std::uint8_t const> Renderer::image() const noexcept { return {_imageBuffer}; }
 

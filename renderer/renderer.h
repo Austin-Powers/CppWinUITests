@@ -16,7 +16,7 @@ public:
     /// @brief Initlizes a new renderer using the given simulation as input.
     ///
     /// @param simulation The simulation to render.
-    Renderer(Simulation const &simulation) noexcept;
+    Renderer(Simulation &simulation) noexcept;
 
     /// @brief Renders the current state of the simulation to the image.
     void render() noexcept;
@@ -43,6 +43,9 @@ private:
         std::uint8_t alpha{};
     };
     static_assert(sizeof(Pixel) == 4U, "Pixel not 4 bytes");
+
+    /// @brief Reference to the simulation to render.
+    Simulation &_simulation;
 
     /// @brief The buffer containing the image data, including bitmap headers.
     std::vector<std::uint8_t> _imageBuffer{};

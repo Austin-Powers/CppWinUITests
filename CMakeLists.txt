@@ -15,6 +15,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(gsl)
 
+add_subdirectory(fileExporter)
 add_subdirectory(renderer)
 add_subdirectory(renderer_tests)
 add_subdirectory(simulation)
