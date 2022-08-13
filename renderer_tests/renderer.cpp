@@ -36,6 +36,12 @@ TEST_F(RendererTests, RendererInitializedCorrectly)
     EXPECT_EQ(infoHeader.biBitCount, 32U);
     EXPECT_EQ(infoHeader.biSizeImage, 4U * expectedWidth * expectedHeight);
     EXPECT_EQ(imageData.size(), fileHeader.bfSize);
+
+    auto const pixelData = imageData.subspan(fileHeader.bfOffBits);
+    for (auto const b : pixelData)
+    {
+        ASSERT_EQ(b, 0xFFU);
+    }
 }
 
 } // namespace APowers::UnitTests
