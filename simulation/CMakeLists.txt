@@ -1,11 +1,12 @@
 set(SOURCES
-	noise.cpp
 	particle.cpp
 	particle.h
 	simulation.cpp
 	simulation.h
 	vector.cpp
 	vector.h
+	../Craft/deps/noise/noise.c
+	../Craft/deps/noise/noise.h
 )
 
 setup_library("${SOURCES}")

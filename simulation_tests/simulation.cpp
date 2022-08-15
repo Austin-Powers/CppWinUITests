@@ -2,8 +2,11 @@
 
 #include <cmath>
 #include <gtest/gtest.h>
-#include <noise.h>
 
+extern "C"
+{
+#include <noise.h>
+}
 // because in Visual Studio _USE_MATH_DEFINES does not reach <math.h> through <cmath>
 #ifndef M_PI
 #include <corecrt_math_defines.h>

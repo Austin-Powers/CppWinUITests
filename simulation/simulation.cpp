@@ -2,7 +2,11 @@
 
 #include <cmath>
 #include <limits>
+
+extern "C"
+{
 #include <noise.h>
+}
 
 // because in Visual Studio _USE_MATH_DEFINES does not reach <math.h> through <cmath>
 #ifndef M_PI

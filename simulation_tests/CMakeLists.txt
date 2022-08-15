@@ -13,6 +13,8 @@ set(SOURCES
 	particle.cpp
 	simulation.cpp
 	vector.cpp
+	../Craft/deps/noise/noise.c
+	../Craft/deps/noise/noise.h
 )
 
 setup_executable("${SOURCES}")
