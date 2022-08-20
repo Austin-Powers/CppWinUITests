@@ -1,5 +1,7 @@
 set(SOURCES
 	main.cpp
+	helpers.h
+	window.hpp
 )
 
 setup_executable("${SOURCES}")
