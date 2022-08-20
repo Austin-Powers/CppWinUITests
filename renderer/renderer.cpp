@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <cstring>
+#include <optional>
 
 namespace APowers {
 
@@ -41,20 +42,42 @@ Renderer::Renderer(Simulation &simulation) noexcept : _simulation{simulation}
 
 void Renderer::render() noexcept
 {
-    auto const          cellSize = _simulation.cellSize();
-    std::uint16_t const width    = cellSize * _simulation.columns();
-    std::uint16_t const height   = cellSize * _simulation.rows();
+    auto const width = _simulation.cellSize() * _simulation.columns();
 
-    for (auto y = 0U; y < height; ++y)
-    {
-        for (auto x = 0U; x < width; ++x)
+    auto const pixelPosForParticle = [&](Particle const &p) noexcept -> std::optional<uint32_t> {
+        auto const pos = static_cast<uint32_t>(p.position.x) + (static_cast<uint32_t>(p.position.y) * width);
+        if (pos >= _pixelBuffer.size())
         {
-            auto const force = _simulation.forceDirection(x / cellSize, y / cellSize);
-            if (force)
+            return {};
+        }
+        return pos;
+    };
+
+    for (auto const &particle : _simulation.particles())
+    {
+        auto const pos = pixelPosForParticle(particle);
+        if (pos)
+        {
+            if (_pixelBuffer[*pos].blue >= 0x10)
             {
-                auto &pixel = _pixelBuffer[(y * width) + x];
-                pixel.blue  = static_cast<std::uint8_t>(std::abs(force->x) * 255.0);
-                pixel.green = static_cast<std::uint8_t>(std::abs(force->y) * 255.0);
+                _pixelBuffer[*pos].blue -= 0x10;
+                _pixelBuffer[*pos].green -= 0x10;
+                _pixelBuffer[*pos].red -= 0x10;
+            }
+        }
+    }
+
+    ++_brighten;
+    if (_brighten > 63U)
+    {
+        _brighten = 0U;
+        for (auto &pixel : _pixelBuffer)
+        {
+            if (pixel.blue != 0xFF)
+            {
+                ++pixel.blue;
+                ++pixel.green;
+                ++pixel.red;
             }
         }
     }

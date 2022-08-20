@@ -52,6 +52,9 @@ private:
 
     /// @brief Span of the part of the _imageBuffer containing the actual pixel data.
     gsl::span<Pixel> _pixelBuffer{};
+
+    /// @brief The counter for brightening the image.
+    uint16_t _brighten{};
 };
 
 } // namespace APowers
