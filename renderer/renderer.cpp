@@ -58,11 +58,11 @@ void Renderer::render() noexcept
         auto const pos = pixelPosForParticle(particle);
         if (pos)
         {
-            if (_pixelBuffer[*pos].blue >= 0x10)
+            if (_pixelBuffer[*pos].blue >= 0x20)
             {
-                _pixelBuffer[*pos].blue -= 0x10;
-                _pixelBuffer[*pos].green -= 0x10;
-                _pixelBuffer[*pos].red -= 0x10;
+                _pixelBuffer[*pos].blue -= 0x20;
+                _pixelBuffer[*pos].green -= 0x20;
+                _pixelBuffer[*pos].red -= 0x20;
             }
         }
     }
