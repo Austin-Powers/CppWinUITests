@@ -2,8 +2,9 @@
 #define UNICODE
 #endif
 
+#include <Windows.h>
+#include <Windowsx.h>
 #include <d2d1_3.h>
-#include <windows.h>
 #pragma comment(lib, "d2d1")
 
 #include "helpers.h"
@@ -27,7 +28,6 @@ public:
     SimulationWindow() : factory(nullptr), renderTarget(nullptr), bitmap{nullptr}
     {
         _thread = std::thread([this]() { threadMethod(); });
-        _simulation.add(APowers::Particle(20, 20));
     }
 
     /// @brief Finalizes the class, shuting down the thread.
@@ -73,7 +73,20 @@ public:
             return 0;
         }
         case WM_SIZE: {
-            Resize();
+            resize();
+            return 0;
+        }
+
+        case WM_LBUTTONUP: {
+            auto const mousePosX = GET_X_LPARAM(lParam);
+            auto const mousePosY = GET_Y_LPARAM(lParam);
+
+            D2D1_RECT_F rect{};
+            auto const  size   = renderTarget->GetSize();
+            auto const  xScale = size.width / (_simulation.cellSize() * _simulation.columns());
+            auto const  yScale = size.height / (_simulation.cellSize() * _simulation.rows());
+
+            _simulation.add(APowers::Particle(mousePosX / xScale, mousePosY / yScale));
             return 0;
         }
         }
@@ -165,7 +178,7 @@ private:
     }
 
     /// @brief Handler method for WM_RESIZE messages.
-    void SimulationWindow::Resize() noexcept
+    void SimulationWindow::resize() noexcept
     {
         if (renderTarget != nullptr)
         {
@@ -196,7 +209,7 @@ private:
     }
 
     /// @brief The simulation.
-    APowers::Simulation _simulation{20U, 16U, 9U};
+    APowers::Simulation _simulation{20U, 48U, 27U};
 
     /// @brief The renderer for generating images from the simulation.
     APowers::Renderer renderer{_simulation};
