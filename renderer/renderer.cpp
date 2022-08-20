@@ -68,7 +68,7 @@ void Renderer::render() noexcept
     }
 
     ++_brighten;
-    if (_brighten > 63U)
+    if (_brighten > 15U)
     {
         _brighten = 0U;
         for (auto &pixel : _pixelBuffer)

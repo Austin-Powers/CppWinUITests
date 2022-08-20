@@ -75,6 +75,9 @@ private:
 
     /// @brief The particles of the simulation.
     std::vector<Particle> _particles{};
+
+    /// @brief The cells of the grid.
+    std::vector<std::pair<uint16_t, Vector>> _cells{};
 };
 
 } // namespace APowers

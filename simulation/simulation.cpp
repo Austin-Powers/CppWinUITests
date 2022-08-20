@@ -17,7 +17,9 @@ namespace APowers {
 
 Simulation::Simulation(std::uint16_t const cellSize, std::uint16_t const columns, std::uint16_t const rows) noexcept
     : _cellSize{cellSize}, _columns{columns}, _rows{rows}
-{}
+{
+    _cells.resize(static_cast<size_t>(columns) * rows);
+}
 
 void Simulation::add(Particle const &particle) noexcept { _particles.push_back(particle); }
 
@@ -25,7 +27,40 @@ size_t Simulation::particleCount() const noexcept { return _particles.size(); }
 
 gsl::span<Particle const> Simulation::particles() const noexcept { return gsl::span<Particle const>{_particles}; }
 
-void Simulation::simulate() noexcept {}
+void Simulation::simulate() noexcept
+{
+    auto const width  = _cellSize * _columns;
+    auto const height = _cellSize * _rows;
+    for (auto &p : _particles)
+    {
+        auto const column = static_cast<uint16_t>(p.position.x) / _cellSize;
+        auto const row    = static_cast<uint16_t>(p.position.y) / _cellSize;
+        auto const force  = forceDirection(column, row);
+        if (force)
+        {
+            p.acceleration.x = force->x * 0.02;
+            p.acceleration.y = force->y * 0.02;
+        }
+        p.simulate();
+        if (p.position.x > width)
+        {
+            p.position.x -= width;
+        }
+        else if (p.position.x < 0.0)
+        {
+            p.position.x += width;
+        }
+
+        if (p.position.y > height)
+        {
+            p.position.y -= height;
+        }
+        else if (p.position.y < 0.0)
+        {
+            p.position.y += height;
+        }
+    }
+}
 
 std::optional<Vector> Simulation::forceDirection(std::uint16_t const column, std::uint16_t const row) noexcept
 {
@@ -33,9 +68,17 @@ std::optional<Vector> Simulation::forceDirection(std::uint16_t const column, std
     {
         return {};
     }
-    auto const noise     = simplex2(column, row, 6, 0.4F, 3.0F);
-    auto const direction = noise * 2.0 * M_PI;
-    return Vector{std::sin(direction), std::cos(direction)};
+
+    auto &cell = _cells[(static_cast<size_t>(_columns) * row) + column];
+    if (cell.first == 0U)
+    {
+        auto const noise     = simplex2(column, row, 6, 0.4F, 3.0F);
+        auto const direction = noise * 2.0 * M_PI;
+        cell.second.x        = std::sin(direction);
+        cell.second.y        = std::cos(direction);
+        cell.first           = 1U;
+    }
+    return cell.second;
 }
 
 } // namespace APowers
