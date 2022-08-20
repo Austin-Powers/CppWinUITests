@@ -218,7 +218,7 @@ private:
     }
 
     /// @brief The simulation.
-    APowers::Simulation _simulation{20U, 48U, 27U};
+    APowers::Simulation _simulation{20U, 64U, 36U};
 
     /// @brief The renderer for generating images from the simulation.
     APowers::Renderer renderer{_simulation};
