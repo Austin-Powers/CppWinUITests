@@ -27,6 +27,7 @@ public:
     SimulationWindow() : factory(nullptr), renderTarget(nullptr), bitmap{nullptr}
     {
         _thread = std::thread([this]() { threadMethod(); });
+        _simulation.add(APowers::Particle(20, 20));
     }
 
     /// @brief Finalizes the class, shuting down the thread.
@@ -42,7 +43,7 @@ public:
     /// @brief Returns the name of the window class.
     ///
     /// @return The name of the window class.
-    PCWSTR className() const noexcept override { return L"Circle Window Class"; }
+    PCWSTR className() const noexcept override { return L"Simulation Window Class"; }
 
     /// @brief Method called for handling message to the window.
     ///
@@ -100,8 +101,8 @@ private:
             {
                 renderer.render();
                 D2D1_SIZE_U bitmapSize{};
-                bitmapSize.width  = simulation.cellSize() * simulation.columns();
-                bitmapSize.height = simulation.cellSize() * simulation.rows();
+                bitmapSize.width  = _simulation.cellSize() * _simulation.columns();
+                bitmapSize.height = _simulation.cellSize() * _simulation.rows();
 
                 D2D1_BITMAP_PROPERTIES properties{};
                 // https://docs.microsoft.com/en-us/windows/win32/direct2d/supported-pixel-formats-and-alpha-modes#supported-formats-for-id2d1hwndrendertarget
@@ -139,6 +140,14 @@ private:
             renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
             if (bitmap)
             {
+                renderer.render();
+                D2D1_RECT_U bitmapSize{};
+                bitmapSize.right  = _simulation.cellSize() * _simulation.columns();
+                bitmapSize.bottom = _simulation.cellSize() * _simulation.rows();
+                bitmap->CopyFromMemory(&bitmapSize,
+                                       reinterpret_cast<void const *>(renderer.image().data() + 54U),
+                                       (bitmapSize.right * 4U));
+
                 D2D1_RECT_F rect{};
                 auto const  size = renderTarget->GetSize();
 
@@ -175,7 +184,8 @@ private:
     {
         while (!_terminate)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds{100U});
+            std::this_thread::sleep_for(std::chrono::milliseconds{40U});
+            _simulation.simulate();
             if (renderTarget != nullptr)
             {
                 RECT rc;
@@ -186,10 +196,10 @@ private:
     }
 
     /// @brief The simulation.
-    APowers::Simulation simulation{20U, 16U, 9U};
+    APowers::Simulation _simulation{20U, 16U, 9U};
 
     /// @brief The renderer for generating images from the simulation.
-    APowers::Renderer renderer{simulation};
+    APowers::Renderer renderer{_simulation};
 
     /// @brief The factory for Direct2D components.
     ID2D1Factory *factory;
