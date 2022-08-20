@@ -38,8 +38,8 @@ void Simulation::simulate() noexcept
         auto const force  = forceDirection(column, row);
         if (force)
         {
-            p.acceleration.x = force->x * 0.02;
-            p.acceleration.y = force->y * 0.02;
+            p.acceleration.x = force->x * 0.1;
+            p.acceleration.y = force->y * 0.1;
         }
         p.simulate();
         if (p.position.x > width)
@@ -60,6 +60,7 @@ void Simulation::simulate() noexcept
             p.position.y += height;
         }
     }
+    ++_step;
 }
 
 std::optional<Vector> Simulation::forceDirection(std::uint16_t const column, std::uint16_t const row) noexcept
@@ -70,13 +71,13 @@ std::optional<Vector> Simulation::forceDirection(std::uint16_t const column, std
     }
 
     auto &cell = _cells[(static_cast<size_t>(_columns) * row) + column];
-    if (cell.first == 0U)
+    if (cell.first != _step)
     {
-        auto const noise     = simplex2(column, row, 6, 0.4F, 3.0F);
+        auto const noise     = simplex3(column, row, 0.004F * _step, 6, 0.4F, 3.0F);
         auto const direction = noise * 2.0 * M_PI;
         cell.second.x        = std::sin(direction);
         cell.second.y        = std::cos(direction);
-        cell.first           = 1U;
+        cell.first           = _step;
     }
     return cell.second;
 }
