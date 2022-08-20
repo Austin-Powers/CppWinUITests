@@ -1,5 +1,7 @@
 #include "particle.h"
 
+#include <cmath>
+
 namespace APowers {
 
 Particle::Particle(double const xPosition,
@@ -19,8 +21,13 @@ void Particle::simulate() noexcept
 {
     velocity += acceleration;
     position += velocity;
-    acceleration.x *= 0.8;
-    acceleration.y *= 0.8;
+
+    // limit velocity
+    if (velocity.lengthSquared() > 4.0)
+    {
+        velocity.x *= 0.75;
+        velocity.y *= 0.75;
+    }
 }
 
 } // namespace APowers

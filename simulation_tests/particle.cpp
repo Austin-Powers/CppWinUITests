@@ -79,12 +79,31 @@ TEST_F(ParticleTest, SimulateOnAcceleratingParticleChangesParticleStateAsExpecte
 
     acceleratingParticle.simulate();
 
-    EXPECT_NEAR(acceleratingParticle.acceleration.x, (accelerationExpectationBefore.x * 0.8), epsilon);
-    EXPECT_NEAR(acceleratingParticle.acceleration.y, (accelerationExpectationBefore.y * 0.8), epsilon);
+    EXPECT_NEAR(acceleratingParticle.acceleration.x, accelerationExpectationBefore.x, epsilon);
+    EXPECT_NEAR(acceleratingParticle.acceleration.y, accelerationExpectationBefore.y, epsilon);
     EXPECT_NEAR(acceleratingParticle.velocity.x, velocityExpectation.x, epsilon);
     EXPECT_NEAR(acceleratingParticle.velocity.y, velocityExpectation.y, epsilon);
     EXPECT_NEAR(acceleratingParticle.position.x, positionExpectation.x, epsilon);
     EXPECT_NEAR(acceleratingParticle.position.y, positionExpectation.y, epsilon);
+}
+
+TEST_F(ParticleTest, SimulateVelocityLimitingWorksAsExpected)
+{
+    auto const checkVelocity = [this]() noexcept -> void {
+        auto const vxExpectation = movingParticle.velocity.x * 0.75;
+        auto const vyExpectation = movingParticle.velocity.y * 0.75;
+        movingParticle.simulate();
+        EXPECT_NEAR(movingParticle.velocity.x, vxExpectation, epsilon);
+        EXPECT_NEAR(movingParticle.velocity.y, vyExpectation, epsilon);
+    };
+    movingParticle.velocity.x = 2.0;
+    checkVelocity();
+    movingParticle.velocity.x = -2.0;
+    checkVelocity();
+    movingParticle.velocity.y = 2.0;
+    checkVelocity();
+    movingParticle.velocity.y = -2.0;
+    checkVelocity();
 }
 
 } // namespace APowers::UnitTests
