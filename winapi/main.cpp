@@ -28,6 +28,15 @@ public:
     SimulationWindow() : factory(nullptr), renderTarget(nullptr), bitmap{nullptr}
     {
         _thread = std::thread([this]() { threadMethod(); });
+
+        auto const cellSize = _simulation.cellSize();
+        for (auto y = 1U; y < _simulation.rows(); ++y)
+        {
+            for (auto x = 1U; x < _simulation.columns(); ++x)
+            {
+                _simulation.add(APowers::Particle(x * cellSize, y * cellSize));
+            }
+        }
     }
 
     /// @brief Finalizes the class, shuting down the thread.
