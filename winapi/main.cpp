@@ -11,7 +11,9 @@
 #include "simulation/simulation.h"
 #include "window.hpp"
 
+#include <atomic>
 #include <memory>
+#include <thread>
 
 /// @brief The class of the simulation window.
 ///
@@ -22,7 +24,20 @@ class SimulationWindow : public APowers::Window<SimulationWindow>
 {
 public:
     /// @brief Initializes a new SimulationWindow.
-    SimulationWindow() : factory(NULL), renderTarget(NULL), bitmap{NULL} {}
+    SimulationWindow() : factory(nullptr), renderTarget(nullptr), bitmap{nullptr}
+    {
+        _thread = std::thread([this]() { threadMethod(); });
+    }
+
+    /// @brief Finalizes the class, shuting down the thread.
+    ~SimulationWindow() noexcept
+    {
+        _terminate = true;
+        if (_thread.joinable())
+        {
+            _thread.join();
+        }
+    }
 
     /// @brief Returns the name of the window class.
     ///
@@ -65,28 +80,13 @@ public:
     }
 
 private:
-    /// @brief The simulation.
-    APowers::Simulation simulation{20U, 16U, 9U};
-
-    /// @brief The renderer for generating images from the simulation.
-    APowers::Renderer renderer{simulation};
-
-    /// @brief The factory for Direct2D components.
-    ID2D1Factory *factory;
-
-    /// @brief The window render target.
-    ID2D1HwndRenderTarget *renderTarget;
-
-    /// @brief The bitmap to render.
-    ID2D1Bitmap *bitmap;
-
     /// @brief Creates the graphics resources for rendering, if they do not already exist.
     ///
     /// @return The result of the operation.
     HRESULT SimulationWindow::createGraphicsResources() noexcept
     {
         HRESULT hr = S_OK;
-        if (renderTarget == NULL)
+        if (renderTarget == nullptr)
         {
             RECT rc;
             GetClientRect(_hwnd, &rc);
@@ -158,7 +158,7 @@ private:
     /// @brief Handler method for WM_RESIZE messages.
     void SimulationWindow::Resize() noexcept
     {
-        if (renderTarget != NULL)
+        if (renderTarget != nullptr)
         {
             RECT rc;
             GetClientRect(_hwnd, &rc);
@@ -166,9 +166,45 @@ private:
             D2D1_SIZE_U size = D2D1::SizeU(rc.right, rc.bottom);
 
             renderTarget->Resize(size);
-            InvalidateRect(_hwnd, NULL, FALSE);
+            InvalidateRect(_hwnd, nullptr, FALSE);
         }
     }
+
+    /// @brief The method executet by the thread.
+    void threadMethod() noexcept
+    {
+        while (!_terminate)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds{100U});
+            if (renderTarget != nullptr)
+            {
+                RECT rc;
+                GetClientRect(_hwnd, &rc);
+                RedrawWindow(_hwnd, &rc, nullptr, RDW_INTERNALPAINT);
+            }
+        }
+    }
+
+    /// @brief The simulation.
+    APowers::Simulation simulation{20U, 16U, 9U};
+
+    /// @brief The renderer for generating images from the simulation.
+    APowers::Renderer renderer{simulation};
+
+    /// @brief The factory for Direct2D components.
+    ID2D1Factory *factory;
+
+    /// @brief The window render target.
+    ID2D1HwndRenderTarget *renderTarget;
+
+    /// @brief The bitmap to render.
+    ID2D1Bitmap *bitmap;
+
+    /// @brief The flag signaling the shutdown of the class.
+    std::atomic_bool _terminate{};
+
+    /// @brief The thread calling sending WM_PAINT messages.
+    std::thread _thread{};
 };
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
@@ -185,7 +221,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     // Run the message loop.
 
     MSG msg = {};
-    while (GetMessage(&msg, NULL, 0, 0))
+    while (GetMessage(&msg, nullptr, 0, 0))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
