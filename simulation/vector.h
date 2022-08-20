@@ -41,6 +41,11 @@ struct Vector
         y -= other.y;
         return *this;
     }
+
+    /// @brief Calculates the squared length of the vector.
+    ///
+    /// @return The squared length of the vector.
+    inline double lengthSquared() const noexcept { return (x * x) + (y * y); }
 };
 
 /// @brief Adds two vectors, creating a new one.

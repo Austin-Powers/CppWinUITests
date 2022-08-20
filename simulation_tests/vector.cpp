@@ -49,4 +49,12 @@ TEST_F(VectorTest, Subtraction)
     EXPECT_NEAR(r.y, (a.y - c.y) - b.y, epsilon);
 }
 
+TEST_F(VectorTest, LengthSquared)
+{
+    auto const lengthSquared = [](Vector const &vec) noexcept -> double { return (vec.x * vec.x) + (vec.y * vec.y); };
+    EXPECT_NEAR(a.lengthSquared(), lengthSquared(a), epsilon);
+    EXPECT_NEAR(b.lengthSquared(), lengthSquared(b), epsilon);
+    EXPECT_NEAR(c.lengthSquared(), lengthSquared(c), epsilon);
+}
+
 } // namespace APowers::UnitTests
