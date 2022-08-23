@@ -8,6 +8,7 @@ For some of my image experiments I would prefer having a GUI to directly display
 
 # Projects
 - __cSharpConnector__ C++ application performing simulation and rendering, conncects to a C# application via sockets
+- __cSharpUI__ C# application connecting to the the C++ application to display its results
 - __fileExporter__ C++ application running a single simulation and rending step and writing the result to a file
 - __renderer__ C++ library for rendering simulation states
 - __renderer_tests__ C++ application testing the renderer library

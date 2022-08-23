@@ -37,4 +37,6 @@ Thumbs.db
 # Visual Studio
 out/
 .vs/
-
+obj/
+bin/
+Properties/
