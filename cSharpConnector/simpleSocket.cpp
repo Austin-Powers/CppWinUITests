@@ -38,13 +38,14 @@ void SimpleSocket::connect() noexcept
                 return INVALID_SOCKET;
             }
             service.sin_port = htons(_port);
-            if (bind(_socket, (SOCKADDR *)&service, sizeof(service)) == SOCKET_ERROR)
+            if (bind(serverSocket, (SOCKADDR *)&service, sizeof(service)) == SOCKET_ERROR)
             {
+                auto const error = WSAGetLastError();
                 closesocket(serverSocket);
                 return INVALID_SOCKET;
             }
 
-            if (listen(_socket, SOMAXCONN) == SOCKET_ERROR)
+            if (listen(serverSocket, SOMAXCONN) == SOCKET_ERROR)
             {
                 closesocket(serverSocket);
                 return INVALID_SOCKET;
