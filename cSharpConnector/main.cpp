@@ -71,20 +71,25 @@ int realMain(int argc, char **argv) noexcept
     std::array<std::uint8_t, 256U> receiveBuffer{};
     socket.connect();
 
-    auto const checkForMessage = [](gsl::span<std::uint8_t const> data, char const *const message) noexcept -> bool {
-        return std::strcmp(reinterpret_cast<char const *>(data.data()), message) == 0;
+    auto const checkForMessage =
+        [](gsl::span<std::uint8_t const> data, char const *const message, size_t n) noexcept -> bool {
+        return std::strncmp(reinterpret_cast<char const *>(data.data()), message, n) == 0;
     };
     while (socket.isConnected())
     {
         auto const bytesReceived = socket.receiveData(receiveBuffer, std::chrono::milliseconds{100U});
-        if (checkForMessage(bytesReceived, "add"))
+        if (bytesReceived.empty())
+        {
+            continue;
+        }
+        if (checkForMessage(bytesReceived, "add", 3))
         {
             try
             {
-                size_t     index{3U};
+                size_t     index{};
                 auto const message = reinterpret_cast<char const *>(bytesReceived.data());
-                auto const x       = std::stoul(message, &index);
-                auto const y       = std::stoul(message, &index);
+                auto const x       = std::stoul(message + 4U, &index);
+                auto const y       = std::stoul(message + 5U + index, &index);
                 simulation.add(Particle(x, y));
             }
             catch (std::invalid_argument const &)
@@ -96,7 +101,7 @@ int realMain(int argc, char **argv) noexcept
                 std::cerr << "Unable to parse add message\n";
             }
         }
-        else if (checkForMessage(bytesReceived, "draw"))
+        else if (checkForMessage(bytesReceived, "draw", 4))
         {
             simulation.simulate();
             renderer.render();
