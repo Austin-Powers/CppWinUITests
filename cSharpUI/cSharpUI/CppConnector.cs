@@ -176,7 +176,6 @@ namespace cSharpUI
                 try
                 {
                     var length = socket.Receive(assemblyBuffer);
-                    File.WriteAllBytes("D:\\Entwicklung\\test.bmp", assemblyBuffer);
                     // Convert received data to image
                     using (var stream = new MemoryStream(assemblyBuffer, 0, length))
                     {

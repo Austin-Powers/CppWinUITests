@@ -37,3 +37,17 @@ to the *CMakeLists.txt* file, to let the linker know you are creating a window-a
 # C#-UI connects via Socket
 This approach promises the easiest way to create the UI. The simulation and rendering will be done in a C++ application. Displaying as well as user input will be done by a C# application.
 The C# application will start the C++ application and connect to it via sockets and loopback.
+
+__Note:__ During the work in this approach several drawbacks were noticed:
+- Building the two applications in an automated way is quite tricky (it was therefore omitted)
+- Stoping the C++ application can be very tricky at some times
+- In general the whole netcode makes this solution very complicated and error prone
+
+__Note:__ There are surely solutions to all the problems mentioned above, but with the Windows API working as well as it does, there is actually no need to invest more time into this approach at the moment
+
+# Other Solutions
+There are at least two more ways to achieve the desired result:
+- C# including the C++-Code as a DLL
+- C++/CLI
+
+Given the learnings from the __C#-UI connects via Socket__ those are most likely difficult to build using CMake and as mentioned above, for me the goal behind this project was already achieved with the Windows API approach
