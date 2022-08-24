@@ -107,6 +107,10 @@ int realMain(int argc, char **argv) noexcept
             renderer.render();
             socket.sendData(renderer.image());
         }
+        else if (checkForMessage(bytesReceived, "close", 4))
+        {
+            return 0;
+        }
     }
     return 0;
 }

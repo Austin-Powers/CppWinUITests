@@ -66,12 +66,23 @@ namespace cSharpUI
         private Socket socket = null;
 
         /// <summary>
+        /// Thread to receiver data from the auto gamer.
+        /// </summary>
+        private Thread receiverThread = null;
+
+        /// <summary>
+        /// Buffer to assemble larger structures of received data.
+        /// </summary>
+        private byte[] assemblyBuffer = null;
+
+        /// <summary>
         /// Initializes a new CppConnector using the parameters for the simulation.
         /// </summary>
         /// <param name="cellSize">The size of the cells in the simulation.</param>
         /// <param name="columns">The amount of columns in the simulation.</param>
         /// <param name="rows">The amount of columns in the simulation.</param>
         public CppConnector(int cellSize, int columns, int rows) {
+            assemblyBuffer = new byte[128 + (cellSize * cellSize * columns * rows * 4)];
             var port = FindFreePort();
             var path = FindApplication();
             if(path != null)
@@ -111,17 +122,28 @@ namespace cSharpUI
                 {
                     throw new IOException("Es konnte keine Verbindung geöffnet werden.");
                 }
+
+                var threadStart = new ThreadStart(this.ThreadMethod);
+                receiverThread = new Thread(threadStart);
+                receiverThread.Start();
             }
         }
 
-        public void AddParticle(Point p)
+        /// <summary>
+        /// Adds a new Particle to the simulation.
+        /// </summary>
+        /// <param name="position">The position of the particle.</param>
+        public void AddParticle(Point position)
         {
             lock (this)
             {
-                socket?.Send(Encoding.UTF8.GetBytes("add " + p.X + " " + p.Y + "\n\0"));
+                socket?.Send(Encoding.UTF8.GetBytes("add " + position.X + " " + position.Y + "\n\0"));
             }
         }
 
+        /// <summary>
+        /// Executes the next step in the simulation.
+        /// </summary>
         public void Simulate()
         { 
             lock (this)
@@ -130,14 +152,47 @@ namespace cSharpUI
             }
         }
 
+        /// <summary>
+        /// Closes the connection to the application, shuting it down in the process.
+        /// </summary>
         public void Close()
         {
             lock (this) 
             { 
+                socket?.Send(Encoding.UTF8.GetBytes("close\n\0"));
                 socket?.Close();
                 socket = null;
             }
-            simulationProcess.WaitForExit();
+        }
+
+        /// <summary>
+        /// Method of the receiver thread.
+        /// </summary>
+        public void ThreadMethod()
+        {
+            socket.ReceiveTimeout = 1000;
+            while (socket != null && socket.Connected)
+            {
+                try
+                {
+                    var length = socket.Receive(assemblyBuffer);
+                    File.WriteAllBytes("D:\\Entwicklung\\test.bmp", assemblyBuffer);
+                    // Convert received data to image
+                    using (var stream = new MemoryStream(assemblyBuffer, 0, length))
+                    {
+                        SimulationResult = new Bitmap(stream);
+                    }
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine(e);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                    Close();
+                }
+            }
         }
     }
 }

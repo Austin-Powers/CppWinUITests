@@ -16,7 +16,7 @@
 *.dylib
 *.dll
 
-# Fortran module files
+# Fortran module files7i6 r c24rf7i8znhm w  w  d rtgbsoiplksda dsax
 *.mod
 *.smod
 
@@ -39,4 +39,3 @@ out/
 .vs/
 obj/
 bin/
-Properties/
