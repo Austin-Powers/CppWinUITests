@@ -50,4 +50,4 @@ There are at least two more ways to achieve the desired result:
 - C# including the C++-Code as a DLL
 - C++/CLI
 
-Given the learnings from the __C#-UI connects via Socket__ those are most likely difficult to build using CMake and as mentioned above, for me the goal behind this project was already achieved with the Windows API approach
+Given the learnings from the __C#-UI connects via Socket__ those are most likely difficult to build using CMake and as mentioned above, for me the goal behind this project was already achieved with the Windows API approach.
